@@ -1,0 +1,67 @@
+import javax.swing.JOptionPane;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Message {
+    // Add these fields
+    private String messageHash;
+    private static List<Message> sentMessages = new ArrayList<>();
+    private static int totalMessages = 0;
+
+    public Message(String messageID, String recipientCell, String messageText) {
+        this.messageID = messageID;
+        this.recipientCell = recipientCell;
+        this.messageText = messageText;
+        this.messageHash = createMessageHash(); // Add this line
+    }
+
+    // Add these methods
+    public String sendMessage() {
+        String[] options = {"Send", "Store", "Disregard"};
+        int choice = JOptionPane.showOptionDialog(
+            null, "What would you like to do with the message?", "Message Options",
+            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+            null, options, options[0]
+        );
+
+        if (choice == 0) {
+            sentMessages.add(this);
+            totalMessages++;
+            return "Message Sent Successfully!\n\n" + printMessages();
+        } else if (choice == 1) {
+            storeMessage();
+            return "Message Stored Successfully!";
+        } else {
+            return "Message Disregarded.";
+        }
+    }
+
+    public String printMessages() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Message ID: ").append(messageID).append("\n");
+        sb.append("Message Hash: ").append(messageHash).append("\n");
+        sb.append("Recipient: ").append(recipientCell).append("\n");
+        sb.append("Message: ").append(messageText).append("\n");
+        sb.append("Total Messages Sent: ").append(totalMessages).append("\n");
+        return sb.toString();
+    }
+
+    public int returnTotalMessages() {
+        return totalMessages;
+    }
+
+    public static void storeMessage() {
+        JSONArray jsonArray = new JSONArray();
+        for (Message msg : sentMessages) {
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put("MessageID", msg.messageID);
+            jsonObj.put("MessageHash", msg.messageHash);
+            jsonObj.put("Recipient", msg.recipientCell);
+            jsonObj.put("Message", msg.messageText);
+            jsonArray.add(jsonObj);
+        }
+        JOptionPane.showMessageDialog(null, "Messages Stored as JSON:\n" + jsonArray.toJSONString());
+    }
+}
