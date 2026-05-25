@@ -1,0 +1,24 @@
+public boolean checkMessageID() {
+    return messageID!= null && messageID.length() <= 10;
+}
+
+public int checkRecipientCell() {
+    if (recipientCell!= null && recipientCell.matches("\\+27\\d{1,11}")) {
+        return 1;
+    }
+    return 0;
+}
+
+public String createMessageHash() {
+    String base = messageID + recipientCell + messageText;
+    int hashValue = base.hashCode();
+    return "MSG" + Math.abs(hashValue);
+}
+
+public String getMessageText() {
+    return messageText;
+}
+
+public String getRecipientCell() {
+    return recipientCell;
+}
