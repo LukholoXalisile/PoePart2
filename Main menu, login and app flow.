@@ -1,0 +1,78 @@
+package com.mycompany.poepart2;
+
+import javax.swing.JOptionPane;
+
+public class PoePart2 {
+    public static void main(String[] args) {
+        JOptionPane.showMessageDialog(null, "Welcome to QuickChat.");
+        
+        if (!login()) {
+            JOptionPane.showMessageDialog(null, "Login failed. Exiting application.");
+            return;
+        }
+        
+        int total = getValidInteger("How many messages would you like to enter?", 1, 100);
+        if (total == -1) return;
+        
+        boolean running = true;
+        while (running) {
+            int choice = showMenu();
+            switch (choice) {
+                case 1: sendMessages(total); break;
+                case 2: JOptionPane.showMessageDialog(null, "Coming Soon."); break;
+                case 3: running = false; break;
+                default: JOptionPane.showMessageDialog(null, "Invalid option.");
+            }
+        }
+        JOptionPane.showMessageDialog(null, "Program finished successfully!");
+    }
+    
+    private static boolean login() {
+        String username = JOptionPane.showInputDialog("Enter username:");
+        if (username == null) return false;
+        String password = JOptionPane.showInputDialog("Enter password:");
+        if (password == null) return false;
+        return!username.trim().isEmpty() &&!password.trim().isEmpty();
+    }
+    
+    private static int showMenu() {
+        String menu = "Choose an option:\n1) Send Messages\n2) Show recently sent messages\n3) Quit";
+        String input = JOptionPane.showInputDialog(menu);
+        if (input == null) return 3;
+        try { return Integer.parseInt(input); } catch (NumberFormatException e) { return -1; }
+    }
+    
+    private static void sendMessages(int total) {
+        for (int i = 1; i <= total; i++) {
+            JOptionPane.showMessageDialog(null, "Enter details for Message " + i + " of " + total);
+            String id = JOptionPane.showInputDialog("Enter Message ID (max 10 characters):");
+            if (id == null) continue;
+            String cell = JOptionPane.showInputDialog("Enter Cell Number (starts with +27):");
+            if (cell == null) continue;
+            String text = JOptionPane.showInputDialog("Enter Message Text:");
+            if (text == null) continue;
+            
+            Message msg = new Message(id, cell, text);
+            if (msg.checkMessageID() && msg.checkRecipientCell() == 1) {
+                String result = msg.sendMessage();
+                JOptionPane.showMessageDialog(null, result);
+            } else {
+                JOptionPane.showMessageDialog(null, "Invalid details! Message " + i + " not sent.");
+            }
+        }
+    }
+    
+    private static int getValidInteger(String prompt, int min, int max) {
+        while (true) {
+            String input = JOptionPane.showInputDialog(prompt);
+            if (input == null) return -1;
+            try {
+                int val = Integer.parseInt(input);
+                if (val >= min && val <= max) return val;
+                JOptionPane.showMessageDialog(null, "Enter a number between " + min + " and " + max);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Invalid number. Try again.");
+            }
+        }
+    }
+}
