@@ -1,0 +1,39 @@
+package com.mycompany.poepart2;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class MessageTest {
+
+    @Test
+    public void testValidMessageID() {
+        Message msg = new Message("MSG123", "+27118639002", "Dinner at 7pm");
+        assertTrue(msg.checkMessageID(), "Message ID should be valid (<= 10 characters)");
+    }
+
+    @Test
+    public void testInvalidMessageID() {
+        Message msg = new Message("MSG1234567890", "+27118639002", "Dinner at 7pm");
+        assertFalse(msg.checkMessageID(), "Message ID should be invalid (> 10 characters)");
+    }
+
+    @Test
+    public void testValidRecipientCell() {
+        Message msg = new Message("MSG123", "+27118639002", "Dinner at 7pm");
+        assertEquals(1, msg.checkRecipientCell(), "Recipient cell should be valid (+27 and <= 13 digits)");
+    }
+
+    @Test
+    public void testInvalidRecipientCell() {
+        Message msg = new Message("MSG123", "0857975889", "Dinner at 7pm");
+        assertEquals(0, msg.checkRecipientCell(), "Recipient cell should be invalid (missing +27)");
+    }
+
+    @Test
+    public void testMessageHashFormat() {
+        Message msg = new Message("MSG123", "+27118639002", "Dinner at 7pm");
+        String hash = msg.createMessageHash();
+        assertTrue(hash.startsWith("MSG"), "Message hash should start with 'MSG'");
+        assertTrue(hash.length() > 3, "Message hash should contain more than just 'MSG'");
+    }
+}
